@@ -1,9 +1,6 @@
 (() => {
   const BUTTONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   const BAR_ID = "yt-speed-buttons-extension";
-  const SPEED_STEP = 0.25;
-  const MIN_SPEED = 0.25;
-  const MAX_SPEED = 4;
 
   const getVideo = () => document.querySelector("video.html5-main-video");
 
@@ -15,7 +12,7 @@
     const video = getVideo();
     if (!video) return;
 
-    video.playbackRate = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speed));
+    video.playbackRate = speed;
     updateActiveButton();
   }
 
@@ -61,24 +58,12 @@
     bar.setAttribute("role", "group");
     bar.setAttribute("aria-label", "影片播放速度");
 
-    const decrease = createButton("−", "速度減少 0.25 倍", () => {
-      const video = getVideo();
-      if (video) setSpeed(video.playbackRate - SPEED_STEP);
-    });
-    bar.append(decrease);
-
     BUTTONS.forEach((speed) => bar.append(createButton(
       formatSpeed(speed),
       `設定速度為 ${formatSpeed(speed)}`,
       () => setSpeed(speed),
       speed,
     )));
-
-    const increase = createButton("+", "速度增加 0.25 倍", () => {
-      const video = getVideo();
-      if (video) setSpeed(video.playbackRate + SPEED_STEP);
-    });
-    bar.append(increase);
 
     const current = document.createElement("span");
     current.className = "yt-speed-current";
@@ -105,22 +90,6 @@
       setTimeout(() => initializePlayer(attempt + 1), 250);
     }
   }
-
-  document.addEventListener("keydown", (event) => {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target?.isContentEditable) return;
-
-    if (event.key === "[") {
-      event.preventDefault();
-      const video = getVideo();
-      if (video) setSpeed(video.playbackRate - SPEED_STEP);
-    }
-    if (event.key === "]") {
-      event.preventDefault();
-      const video = getVideo();
-      if (video) setSpeed(video.playbackRate + SPEED_STEP);
-    }
-  });
 
   document.addEventListener("ratechange", updateActiveButton, true);
   document.addEventListener("yt-navigate-finish", () => initializePlayer());
