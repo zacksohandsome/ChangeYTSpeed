@@ -3,8 +3,45 @@
   const BAR_ID = "yt-speed-buttons-extension";
   const VOLUME_BAR_ID = "yt-volume-buttons-extension";
   const VOLUME_STEP = 0.05;
+  const SETTINGS_KEY = "yt-speed-buttons-session-settings";
+  const initializedVideos = new WeakSet();
+  let isLoadingNewVideo = false;
 
   const getVideo = () => document.querySelector("video.html5-main-video");
+
+  function getSavedSettings() {
+    try {
+      const settings = JSON.parse(sessionStorage.getItem(SETTINGS_KEY) || "{}");
+      return {
+        playbackRate: typeof settings.playbackRate === "number" ? settings.playbackRate : null,
+      };
+    } catch {
+      return { playbackRate: null };
+    }
+  }
+
+  let savedSettings = getSavedSettings();
+
+  function saveSettings(video) {
+    savedSettings = {
+      playbackRate: video.playbackRate,
+    };
+
+    try {
+      sessionStorage.setItem(SETTINGS_KEY, JSON.stringify(savedSettings));
+    } catch {
+      // Browser privacy settings can disable session storage.
+    }
+  }
+
+  function applySavedSettings(video = getVideo(), force = false) {
+    if (!video || (!force && initializedVideos.has(video))) return;
+
+    initializedVideos.add(video);
+    if (savedSettings.playbackRate !== null && savedSettings.playbackRate > 0) {
+      video.playbackRate = savedSettings.playbackRate;
+    }
+  }
 
   function formatSpeed(speed) {
     return `${Number(speed.toFixed(2))}×`;
@@ -166,6 +203,7 @@
   function sync() {
     createBar();
     createVolumeBar();
+    applySavedSettings();
     updateActiveButton();
   }
 
@@ -182,7 +220,30 @@
     }
   }
 
-  document.addEventListener("ratechange", updateActiveButton, true);
+  document.addEventListener("ratechange", (event) => {
+    const video = getVideo();
+    if (event.target !== video) return;
+    applySavedSettings();
+    if (!isLoadingNewVideo) saveSettings(video);
+    updateActiveButton();
+  }, true);
+
+  document.addEventListener("yt-navigate-start", () => {
+    isLoadingNewVideo = true;
+  });
+
+  document.addEventListener("loadstart", (event) => {
+    if (event.target === getVideo()) isLoadingNewVideo = true;
+  }, true);
+
+  document.addEventListener("loadedmetadata", (event) => {
+    const video = getVideo();
+    if (event.target !== video) return;
+    applySavedSettings(video, true);
+    isLoadingNewVideo = false;
+    updateActiveButton();
+  }, true);
+
   document.addEventListener("yt-navigate-finish", () => initializePlayer());
   document.addEventListener("yt-page-data-updated", () => scheduleSync(250));
   initializePlayer();
