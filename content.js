@@ -1,6 +1,8 @@
 (() => {
   const BUTTONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   const BAR_ID = "yt-speed-buttons-extension";
+  const VOLUME_BAR_ID = "yt-volume-buttons-extension";
+  const VOLUME_STEP = 0.05;
 
   const getVideo = () => document.querySelector("video.html5-main-video");
 
@@ -14,6 +16,15 @@
 
     video.playbackRate = speed;
     updateActiveButton();
+  }
+
+  function changeVolume(amount) {
+    const video = getVideo();
+    if (!video) return;
+
+    const volume = Math.min(1, Math.max(0, video.volume + amount));
+    video.volume = volume;
+    if (volume > 0) video.muted = false;
   }
 
   function updateActiveButton() {
@@ -128,8 +139,33 @@
     updateActiveButton();
   }
 
+  function createVolumeBar() {
+    if (document.getElementById(VOLUME_BAR_ID)) return;
+
+    const player = document.querySelector("#movie_player");
+    if (!player) return;
+
+    const bar = document.createElement("div");
+    bar.id = VOLUME_BAR_ID;
+    bar.setAttribute("role", "group");
+    bar.setAttribute("aria-label", "影片音量");
+
+    const dragHandle = document.createElement("span");
+    dragHandle.className = "yt-speed-drag-handle";
+    dragHandle.textContent = "⠿";
+    dragHandle.title = "拖曳以移動音量按鈕";
+    dragHandle.setAttribute("aria-label", "拖曳以移動音量按鈕");
+    bar.append(dragHandle);
+
+    bar.append(createButton("音−", "音量減少 5%", () => changeVolume(-VOLUME_STEP)));
+    bar.append(createButton("音+", "音量增加 5%", () => changeVolume(VOLUME_STEP)));
+    player.append(bar);
+    enableDragging(bar, player, dragHandle);
+  }
+
   function sync() {
     createBar();
+    createVolumeBar();
     updateActiveButton();
   }
 

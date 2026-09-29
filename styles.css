@@ -18,7 +18,31 @@
   transition: opacity 160ms ease;
 }
 
+#yt-volume-buttons-extension {
+  position: absolute;
+  left: 12px;
+  bottom: 88px;
+  z-index: 65;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: Roboto, Arial, sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
 #movie_player:hover:not(.ytp-autohide) #yt-speed-buttons-extension {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#movie_player:hover:not(.ytp-autohide) #yt-volume-buttons-extension {
   opacity: 1;
   pointer-events: auto;
 }
@@ -59,8 +83,23 @@
   cursor: pointer;
 }
 
+#yt-volume-buttons-extension button {
+  min-width: 39px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  font: 500 13px Roboto, Arial, sans-serif;
+  line-height: 28px;
+  cursor: pointer;
+}
+
 #yt-speed-buttons-extension button:hover,
-#yt-speed-buttons-extension button:focus-visible {
+#yt-speed-buttons-extension button:focus-visible,
+#yt-volume-buttons-extension button:hover,
+#yt-volume-buttons-extension button:focus-visible {
   background: rgba(255, 255, 255, 0.36);
   outline: 2px solid #fff;
   outline-offset: 1px;
@@ -84,13 +123,28 @@
 @media (max-width: 700px) {
   #yt-speed-buttons-extension {
     right: 8px;
-    bottom: 48px;
+    bottom: 70px;
     gap: 3px;
     padding: 4px;
   }
 
   #yt-speed-buttons-extension button {
     min-width: 31px;
+    height: 25px;
+    padding: 0 5px;
+    font-size: 12px;
+    line-height: 25px;
+  }
+
+  #yt-volume-buttons-extension {
+    left: 8px;
+    bottom: 70px;
+    gap: 3px;
+    padding: 4px;
+  }
+
+  #yt-volume-buttons-extension button {
+    min-width: 36px;
     height: 25px;
     padding: 0 5px;
     font-size: 12px;
