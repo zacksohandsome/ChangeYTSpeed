@@ -1,0 +1,80 @@
+#yt-speed-buttons-extension {
+  position: absolute;
+  right: 12px;
+  bottom: 58px;
+  z-index: 65;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: calc(100% - 24px);
+  padding: 6px 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: Roboto, Arial, sans-serif;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+#movie_player:hover #yt-speed-buttons-extension {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#yt-speed-buttons-extension {
+  pointer-events: none;
+}
+
+#yt-speed-buttons-extension button {
+  min-width: 35px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  font: 500 13px Roboto, Arial, sans-serif;
+  line-height: 28px;
+  cursor: pointer;
+}
+
+#yt-speed-buttons-extension button:hover,
+#yt-speed-buttons-extension button:focus-visible {
+  background: rgba(255, 255, 255, 0.36);
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+#yt-speed-buttons-extension button.yt-speed-active {
+  background: #ff0033;
+  font-weight: 700;
+}
+
+.yt-speed-current {
+  min-width: 34px;
+  padding-left: 3px;
+  color: #eee;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  #yt-speed-buttons-extension {
+    right: 8px;
+    bottom: 48px;
+    gap: 3px;
+    padding: 4px;
+  }
+
+  #yt-speed-buttons-extension button {
+    min-width: 31px;
+    height: 25px;
+    padding: 0 5px;
+    font-size: 12px;
+    line-height: 25px;
+  }
+}
