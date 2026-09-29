@@ -18,7 +18,7 @@
   transition: opacity 160ms ease;
 }
 
-#movie_player:hover #yt-speed-buttons-extension {
+#movie_player:hover:not(.ytp-autohide) #yt-speed-buttons-extension {
   opacity: 1;
   pointer-events: auto;
 }
