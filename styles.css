@@ -1,7 +1,7 @@
 #yt-speed-buttons-extension {
   position: absolute;
   right: 12px;
-  bottom: 58px;
+  bottom: 88px;
   z-index: 65;
   display: flex;
   align-items: center;
@@ -25,6 +25,25 @@
 
 #yt-speed-buttons-extension {
   pointer-events: none;
+}
+
+.yt-speed-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ddd;
+  cursor: grab;
+  font-size: 18px;
+  line-height: 1;
+  touch-action: none;
+  user-select: none;
+}
+
+#yt-speed-buttons-extension.yt-speed-dragging .yt-speed-drag-handle {
+  cursor: grabbing;
 }
 
 #yt-speed-buttons-extension button {
@@ -76,5 +95,9 @@
     padding: 0 5px;
     font-size: 12px;
     line-height: 25px;
+  }
+
+  .yt-speed-drag-handle {
+    height: 25px;
   }
 }

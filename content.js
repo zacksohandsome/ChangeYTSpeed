@@ -47,6 +47,53 @@
     return button;
   }
 
+  function enableDragging(bar, player, handle) {
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    handle.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+
+      const barBounds = bar.getBoundingClientRect();
+      dragOffsetX = event.clientX - barBounds.left;
+      dragOffsetY = event.clientY - barBounds.top;
+      handle.setPointerCapture(event.pointerId);
+      bar.classList.add("yt-speed-dragging");
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    handle.addEventListener("pointermove", (event) => {
+      if (!handle.hasPointerCapture(event.pointerId)) return;
+
+      const playerBounds = player.getBoundingClientRect();
+      const barBounds = bar.getBoundingClientRect();
+      const left = Math.min(
+        Math.max(0, event.clientX - playerBounds.left - dragOffsetX),
+        playerBounds.width - barBounds.width,
+      );
+      const top = Math.min(
+        Math.max(0, event.clientY - playerBounds.top - dragOffsetY),
+        playerBounds.height - barBounds.height,
+      );
+
+      bar.style.left = `${left}px`;
+      bar.style.top = `${top}px`;
+      bar.style.right = "auto";
+      bar.style.bottom = "auto";
+    });
+
+    const stopDragging = (event) => {
+      if (handle.hasPointerCapture(event.pointerId)) {
+        handle.releasePointerCapture(event.pointerId);
+      }
+      bar.classList.remove("yt-speed-dragging");
+    };
+
+    handle.addEventListener("pointerup", stopDragging);
+    handle.addEventListener("pointercancel", stopDragging);
+  }
+
   function createBar() {
     if (document.getElementById(BAR_ID)) return;
 
@@ -57,6 +104,13 @@
     bar.id = BAR_ID;
     bar.setAttribute("role", "group");
     bar.setAttribute("aria-label", "影片播放速度");
+
+    const dragHandle = document.createElement("span");
+    dragHandle.className = "yt-speed-drag-handle";
+    dragHandle.textContent = "⠿";
+    dragHandle.title = "拖曳以移動倍速按鈕";
+    dragHandle.setAttribute("aria-label", "拖曳以移動倍速按鈕");
+    bar.append(dragHandle);
 
     BUTTONS.forEach((speed) => bar.append(createButton(
       formatSpeed(speed),
@@ -70,6 +124,7 @@
     current.title = "目前播放速度";
     bar.append(current);
     player.append(bar);
+    enableDragging(bar, player, dragHandle);
     updateActiveButton();
   }
 
