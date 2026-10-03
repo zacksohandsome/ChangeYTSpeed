@@ -62,6 +62,7 @@
     const volume = Math.min(1, Math.max(0, video.volume + amount));
     video.volume = volume;
     if (volume > 0) video.muted = false;
+    updateVolumeLabel();
   }
 
   function updateActiveButton() {
@@ -78,6 +79,16 @@
 
     const label = bar.querySelector(".yt-speed-current");
     if (label) label.textContent = formatSpeed(video.playbackRate);
+  }
+
+  function updateVolumeLabel() {
+    const video = getVideo();
+    const bar = document.getElementById(VOLUME_BAR_ID);
+    if (!video || !bar) return;
+
+    const volume = video.muted ? 0 : Math.round(video.volume * 100);
+    const label = bar.querySelector(".yt-volume-current");
+    if (label) label.textContent = `${volume}%`;
   }
 
   function createButton(label, title, onClick, speed) {
@@ -196,8 +207,15 @@
 
     bar.append(createButton("音−", "音量減少 5%", () => changeVolume(-VOLUME_STEP)));
     bar.append(createButton("音+", "音量增加 5%", () => changeVolume(VOLUME_STEP)));
+
+    const current = document.createElement("span");
+    current.className = "yt-volume-current";
+    current.title = "目前播放音量";
+    current.setAttribute("aria-live", "polite");
+    bar.append(current);
     player.append(bar);
     enableDragging(bar, player, dragHandle);
+    updateVolumeLabel();
   }
 
   function sync() {
@@ -205,6 +223,7 @@
     createVolumeBar();
     applySavedSettings();
     updateActiveButton();
+    updateVolumeLabel();
   }
 
   let syncTimer;
@@ -228,6 +247,10 @@
     updateActiveButton();
   }, true);
 
+  document.addEventListener("volumechange", (event) => {
+    if (event.target === getVideo()) updateVolumeLabel();
+  }, true);
+
   document.addEventListener("yt-navigate-start", () => {
     isLoadingNewVideo = true;
   });
@@ -242,6 +265,7 @@
     applySavedSettings(video, true);
     isLoadingNewVideo = false;
     updateActiveButton();
+    updateVolumeLabel();
   }, true);
 
   document.addEventListener("yt-navigate-finish", () => initializePlayer());

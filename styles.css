@@ -70,6 +70,10 @@
   cursor: grabbing;
 }
 
+#yt-volume-buttons-extension.yt-speed-dragging .yt-speed-drag-handle {
+  cursor: grabbing;
+}
+
 #yt-speed-buttons-extension button {
   min-width: 35px;
   height: 28px;
@@ -113,6 +117,15 @@
 .yt-speed-current {
   min-width: 34px;
   padding-left: 3px;
+  color: #eee;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.yt-volume-current {
+  min-width: 31px;
   color: #eee;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
